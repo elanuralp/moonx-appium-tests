@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="MoonxAppTestSuite" verbose="1">
+    <test name="iOS Onboarding Tests">
+        <parameter name="platformName" value="iOS"/>
+        <parameter name="platformVersion" value="18.2"/>
+        <parameter name="deviceName" value="iPhone 16"/>
+        <parameter name="appPath" value="/Users/elanuralp/Development/flutter/moonx/build/ios/iphonesimulator/Runner.app"/>
+
+        <classes>
+            <class name="tests.OnboardingTest"/>
+        </classes>
+    </test>
+</suite>
