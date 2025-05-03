@@ -59,6 +59,9 @@ public class BaseTest {
                 options.setApp(appPath);
                 options.setAutomationName(AutomationName.IOS_XCUI_TEST);
                 options.setWdaLaunchTimeout(Duration.ofSeconds(120));
+                options.setNoReset(false);
+                options.setCapability("autoAcceptAlerts", false); // We want to handle it in the test
+                options.setCapability("autoDismissAlerts", false); // We want to handle it in the test
 
                 driver = new IOSDriver(appiumServerUrl, options);
                 log.info("iOS driver initialized successfully");
@@ -72,7 +75,7 @@ public class BaseTest {
             throw e;
         }
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         log.info("Implicit wait set to 15 seconds.");
     }
 
