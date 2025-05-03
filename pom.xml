@@ -27,6 +27,12 @@
             <version>${appium.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.0.9</version>
+        </dependency>
+
 
         <!-- Selenium Java Bindings -->
         <dependency>
