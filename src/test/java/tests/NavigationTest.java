@@ -10,9 +10,6 @@ public class NavigationTest extends BaseTest {
 
     @BeforeClass
     public void navigateToHomeScreen() throws InterruptedException {
-        if (driver == null) {
-            throw new IllegalStateException("Driver not initialized before @BeforeClass in NavigationTest.");
-        }
         WelcomePage welcomePage = new WelcomePage(driver);
         BirthdayPage birthdayPage = new BirthdayPage(driver);
         BirthPlacePage birthPlacePage = new BirthPlacePage(driver);

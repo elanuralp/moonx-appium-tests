@@ -5,8 +5,6 @@ import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobilePlatform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -19,9 +17,14 @@ import java.time.Duration;
 
 public class BaseTest {
 
+    private static ThreadLocal<AppiumDriver> driverThreadLocal = new ThreadLocal<>();
     protected AppiumDriver driver;
     private static final String APPIUM_SERVER_URL = "http://127.0.0.1:4723/";
+    // protected static final Logger log = LoggerFactory.getLogger(BaseTest.class); // Keep if needed elsewhere
 
+    public static AppiumDriver getDriver() {
+        return driverThreadLocal.get();
+    }
 
     @Parameters({ "platformName", "platformVersion", "deviceName", "appPath" })
     @BeforeClass
@@ -31,6 +34,9 @@ public class BaseTest {
             @Optional("iPhone 16") String deviceName,
             @Optional("") String appPath
     ) throws MalformedURLException {
+
+        AppiumDriver initializedDriver;
+
         if (appPath == null || appPath.isEmpty()) {
             appPath = "/Users/elanuralp/Development/flutter/moonx/build/ios/iphonesimulator/Runner.app";
         }
@@ -55,23 +61,27 @@ public class BaseTest {
                 options.setCapability("autoAcceptAlerts", false);
                 options.setCapability("autoDismissAlerts", false);
 
-                driver = new IOSDriver(appiumServerUrl, options);
+                initializedDriver = new IOSDriver(appiumServerUrl, options);
             } else {
                 throw new IllegalArgumentException(
                         "Only iOS is supported for this test"
                 );
             }
+            driverThreadLocal.set(initializedDriver);
+            this.driver = initializedDriver;
+
         } catch (Exception e) {
-            // Consider logging the error here even if removing general logs
-            // System.err.println("Error initializing driver: " + e.getMessage());
             throw e;
         }
     }
 
     @AfterClass
     public void tearDownClass() {
-        if (driver != null) {
-            driver.quit();
+        AppiumDriver driverToQuit = driverThreadLocal.get();
+        if (driverToQuit != null) {
+            driverToQuit.quit();
+            driverThreadLocal.remove();
         }
+        this.driver = null;
     }
 }
