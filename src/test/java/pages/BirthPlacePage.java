@@ -22,7 +22,6 @@ public class BirthPlacePage extends BasePage {
 
     public void enterPlace(String place) {
         try {
-            // 1. Open the birth place picker (adjust the button index or locator as needed)
             List<WebElement> buttons = driver.findElements(AppiumBy.className("XCUIElementTypeButton"));
             boolean clicked = false;
             for (WebElement button : buttons) {
@@ -33,40 +32,33 @@ public class BirthPlacePage extends BasePage {
                     break;
                 }
             }
-            // If you know the index, you can use: buttons.get(X).click();
             if (!clicked && buttons.size() > 0) {
-                // fallback: try the last button
                 buttons.get(buttons.size() - 1).click();
             }
 
-            // 2. Wait for the picker to appear
-            Thread.sleep(500); // or use WebDriverWait if you prefer
+            Thread.sleep(500);
 
-            // 3. Find the picker wheel for city
             List<WebElement> pickers = driver.findElements(AppiumBy.xpath("//XCUIElementTypeOther[@value]"));
             if (pickers.isEmpty()) return;
-            WebElement cityPicker = pickers.get(0); // Adjust index if needed
+            WebElement cityPicker = pickers.get(0);
 
-            // 4. Swipe until the desired city is selected
             for (int i = 0; i < 15; i++) {
                 String currentValue = cityPicker.getAttribute("value");
                 if (currentValue != null && currentValue.equalsIgnoreCase(place)) {
                     break;
                 }
-                swipeOnElement(cityPicker, true); // swipe up
+                swipeOnElement(cityPicker, true);
                 Thread.sleep(400);
             }
-            // Try swiping down if not found
             for (int i = 0; i < 15; i++) {
                 String currentValue = cityPicker.getAttribute("value");
                 if (currentValue != null && currentValue.equalsIgnoreCase(place)) {
                     break;
                 }
-                swipeOnElement(cityPicker, false); // swipe down
+                swipeOnElement(cityPicker, false);
                 Thread.sleep(400);
             }
 
-            // 5. Tap Done or outside picker to confirm
             List<WebElement> doneButtons = driver.findElements(AppiumBy.accessibilityId("Done"));
             if (!doneButtons.isEmpty()) {
                 doneButtons.get(0).click();
@@ -77,7 +69,6 @@ public class BirthPlacePage extends BasePage {
         } catch (Exception ignored) {}
     }
 
-    // Helper: swipe on picker element
     private void swipeOnElement(WebElement element, boolean swipeUp) {
         try {
             Point location = element.getLocation();
@@ -85,7 +76,6 @@ public class BirthPlacePage extends BasePage {
             int height = element.getSize().getHeight();
             int centerX = location.getX() + width / 2;
             int centerY = location.getY() + height / 2;
-            // swipe by a quarter of the wheel’s height:
             int offset = height / 4;
 
             int startY = swipeUp ? centerY + offset : centerY - offset;
@@ -108,14 +98,12 @@ public class BirthPlacePage extends BasePage {
         } catch (Exception ignored) {}
     }
 
-
-    // Helper: tap outside picker if no Done button
     private void tapOutsidePicker() {
         try {
             int width = driver.manage().window().getSize().getWidth();
             int height = driver.manage().window().getSize().getHeight();
             int tapX = width / 2;
-            int tapY = (int) (height * 0.1); // 10% from the top
+            int tapY = (int) (height * 0.1);
 
             org.openqa.selenium.interactions.PointerInput finger = new org.openqa.selenium.interactions.PointerInput(
                     org.openqa.selenium.interactions.PointerInput.Kind.TOUCH, "finger");
@@ -129,7 +117,6 @@ public class BirthPlacePage extends BasePage {
         } catch (Exception ignored) {}
     }
 
-
     public void tapNext() {
         try {
             driver.findElement(AppiumBy.accessibilityId("Next")).click();
@@ -137,30 +124,21 @@ public class BirthPlacePage extends BasePage {
     }
 
     public void selectBirthTime(String hour, String minute, String ampm) throws InterruptedException {
-        // 1) Tap the “Enter Birth Time” button directly by its label
         WebElement timeBtn = driver.findElement(AppiumBy.iOSNsPredicateString(
                 "label CONTAINS 'Enter Birth Time' or name CONTAINS 'Birth Time'"
         ));
         timeBtn.click();
         Thread.sleep(500);
 
-        // 2) Locate your three custom wheels (value-based)
         List<WebElement> wheels = driver.findElements(AppiumBy.xpath(
                 "//XCUIElementTypeOther[@value]"
         ));
         if (wheels.size() < 3) return;
 
-        // 3) Debug: print out what values you see
-        for (int i = 0; i < wheels.size(); i++) {
-            System.out.println("Wheel[" + i + "] = " + wheels.get(i).getAttribute("value"));
-        }
-
-        // 4) Brute-force each wheel: up to 10 taps above, then 10 taps below
         bruteForceSet(wheels.get(0), hour);
         bruteForceSet(wheels.get(1), minute);
         bruteForceSet(wheels.get(2), ampm);
 
-        // 5) Dismiss the picker by tapping outside
         Dimension sz = driver.manage().window().getSize();
         int x = sz.width / 2;
         int y = (int)(sz.height * 0.1);
@@ -171,15 +149,13 @@ public class BirthPlacePage extends BasePage {
         Thread.sleep(300);
     }
 
-    // Bounded, two-phase tap logic: first top half, then bottom half
     private void bruteForceSet(WebElement wheel, String target) throws InterruptedException {
         Point loc = wheel.getLocation();
         Dimension size = wheel.getSize();
         int cx = loc.getX() + size.width/2;
-        int topY = loc.getY() + size.height/4;      // tap here to go up
-        int botY = loc.getY() + size.height*3/4;    // tap here to go down
+        int topY = loc.getY() + size.height/4;
+        int botY = loc.getY() + size.height*3/4;
 
-        // 10 taps on top
         for (int i = 0; i < 10; i++) {
             String cur = wheel.getAttribute("value");
             if (target.equalsIgnoreCase(cur)) return;
@@ -188,7 +164,6 @@ public class BirthPlacePage extends BasePage {
                     .perform();
             Thread.sleep(200);
         }
-        // 10 taps on bottom
         for (int i = 0; i < 10; i++) {
             String cur = wheel.getAttribute("value");
             if (target.equalsIgnoreCase(cur)) return;
@@ -198,5 +173,4 @@ public class BirthPlacePage extends BasePage {
             Thread.sleep(200);
         }
     }
-
 }

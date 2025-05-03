@@ -9,20 +9,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class MeditationPage extends BasePage {
+public class ProfilePage extends BasePage {
 
-    private static final By MEDITATION_SCREEN_INDICATOR = AppiumBy.accessibilityId("Meditation\nTab 2 of 3");
+    private static final By PROFILE_SCREEN_INDICATOR = AppiumBy.accessibilityId("Profile\nTab 3 of 3");
 
     private static final Duration VERIFICATION_WAIT = Duration.ofSeconds(10);
 
-    public MeditationPage(AppiumDriver driver) {
+    public ProfilePage(AppiumDriver driver) {
         super(driver);
     }
 
-    public boolean isMeditationScreenDisplayed() {
+    public boolean isProfileScreenDisplayed() {
         WebDriverWait wait = new WebDriverWait(driver, VERIFICATION_WAIT);
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(MEDITATION_SCREEN_INDICATOR));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(PROFILE_SCREEN_INDICATOR));
             return true;
         } catch (TimeoutException e) {
             return false;

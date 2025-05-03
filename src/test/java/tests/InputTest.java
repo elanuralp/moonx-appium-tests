@@ -10,7 +10,7 @@ import pages.BirthdayPage;
 import pages.HomePage;
 import pages.WelcomePage;
 
-public class OnboardingTest extends BaseTest {
+public class InputTest extends BaseTest {
 
     @Test(description = "TC_INPUT_03: Test birthday screen validation message")
     public void testBirthdayValidation() {
